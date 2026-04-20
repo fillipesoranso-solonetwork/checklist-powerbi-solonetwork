@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checklist de Boas Práticas — Power BI | Solo Network</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Aptos:wght@400;500;600&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Aptos', 'Segoe UI', sans-serif;
+      background: #F8F8F7;
+      color: #3C3C3B;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .cl-root {
+      width: 100%;
+      max-width: 680px;
+      padding: 2rem 2rem 1.5rem;
+    }
+
+    .cl-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #D7262C;
+      margin-bottom: 6px;
+    }
+
+    .cl-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #3C3C3B;
+      margin-bottom: 1.75rem;
+      line-height: 1.25;
+    }
+
+    .cl-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .cl-kpi { text-align: right; }
+    .cl-kpi-num { font-size: 28px; font-weight: 600; color: #D7262C; line-height: 1; }
+    .cl-kpi-sub { font-size: 11px; color: #3C3C3B; opacity: 0.45; margin-top: 3px; letter-spacing: 0.04em; }
+
+    .cl-bar-wrap {
+      background: #e3e3e2;
+      border-radius: 99px;
+      height: 5px;
+      margin-bottom: 1.75rem;
+      overflow: hidden;
+    }
+    .cl-bar {
+      height: 5px;
+      border-radius: 99px;
+      background: #D7262C;
+      transition: width 0.35s cubic-bezier(.4,0,.2,1);
+      width: 0%;
+    }
+
+    .cl-section { margin-bottom: 1.25rem; }
+    .cl-section-title {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #3C3C3B;
+      opacity: 0.4;
+      margin-bottom: 8px;
+      padding-left: 2px;
+    }
+
+    .cl-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 3px;
+      background: transparent;
+      border: 1px solid transparent;
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .cl-item:hover { background: #eeedec; }
+    .cl-item.checked { background: #fff; border-color: #e3e3e2; }
+    .cl-item.checked .cl-item-text {
+      color: #b0afae;
+      text-decoration: line-through;
+      text-decoration-color: #ccc;
+    }
+
+    .cl-box {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border-radius: 5px;
+      border: 1.5px solid #c5c4c3;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .cl-item.checked .cl-box { background: #D7262C; border-color: #D7262C; }
+    .cl-check { display: none; }
+    .cl-item.checked .cl-check { display: block; }
+    .cl-item-text { font-size: 14px; color: #3C3C3B; line-height: 1.5; transition: color 0.15s; }
+
+    .cl-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e3e3e2;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .cl-footer-left { display: flex; flex-direction: column; gap: 4px; }
+    .cl-footer-note { font-size: 12px; color: #3C3C3B; opacity: 0.35; }
+    .cl-footer-link {
+      font-size: 12px;
+      color: #D7262C;
+      text-decoration: none;
+      opacity: 0.75;
+      border-bottom: 1px solid transparent;
+      transition: opacity 0.15s, border-color 0.15s;
+    }
+    .cl-footer-link:hover { opacity: 1; border-bottom-color: #D7262C; }
+
+    .cl-reset {
+      font-family: 'Aptos', 'Segoe UI', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: #D7262C;
+      background: none;
+      border: 1px solid #D7262C;
+      border-radius: 8px;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      opacity: 0.75;
+      white-space: nowrap;
+    }
+    .cl-reset:hover { background: #D7262C; color: #fff; opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="cl-root">
+
+    <p class="cl-eyebrow">Power BI &nbsp;|&nbsp; Solo Network</p>
+    <h1 class="cl-title">Checklist de boas práticas<br>para dashboards</h1>
+
+    <div class="cl-header">
+      <div class="cl-kpi">
+        <div class="cl-kpi-num" id="pnum">0</div>
+        <div class="cl-kpi-sub">DE 26</div>
+      </div>
+    </div>
+
+    <div class="cl-bar-wrap"><div class="cl-bar" id="pbar"></div></div>
+
+    <!-- Propósito e planejamento -->
+    <div class="cl-section">
+      <div class="cl-section-title">Propósito e planejamento</div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Definir o propósito do dashboard antes de iniciar o desenvolvimento</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Identificar o público-alvo e o problema que o painel resolve</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Validar os KPIs mais relevantes com a área solicitante</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Definir a frequência de uso (diária, semanal, mensal)</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Evitar métricas irrelevantes ou redundantes</span></div>
+    </div>
+
+    <!-- Nomenclatura -->
+    <div class="cl-section">
+      <div class="cl-section-title">Nomenclatura</div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Não incluir "dashboard", "dash" ou "painel" no título</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Usar nome direto e descritivo que reflita o conteúdo</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Aplicar prefixo de área ou finalidade (ex.: [FIN], [RH])</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Incluir versão ou data quando o dashboard mudar com frequência</span></div>
+    </div>
+
+    <!-- Organização visual -->
+    <div class="cl-section">
+      <div class="cl-section-title">Organização visual</div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Limitar a 4 ou 5 componentes por página</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Posicionar os dados mais relevantes no topo (padrão de leitura em "Z")</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Usar gráficos de linha para dados temporais</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Usar gráficos de barras para dados categóricos</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Evitar gráficos de pizza/rosca com mais de 3 categorias</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Usar paleta de cores neutra; reservar vermelho/amarelo/verde para alertas</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Manter fundo neutro, sem poluição visual</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Padronizar tipos de gráficos e ícones em todo o painel</span></div>
+    </div>
+
+    <!-- Dados e atualização -->
+    <div class="cl-section">
+      <div class="cl-section-title">Dados e atualização</div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Garantir que os dados estejam atualizados e corretos</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Automatizar a atualização dos dados sempre que possível</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Exibir a data da última atualização no painel</span></div>
+    </div>
+
+    <!-- Validação e entrega -->
+    <div class="cl-section">
+      <div class="cl-section-title">Validação e entrega</div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Testar com usuários reais antes de publicar</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Coletar feedback sobre clareza, navegação e utilidade</span></div>
+      <div class="cl-item" onclick="toggle(this)"><div class="cl-box"><svg class="cl-check" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cl-item-text">Verificar se novas funcionalidades estão alinhadas ao propósito original</span></div>
+    </div>
+
+    <div class="cl-footer">
+      <div class="cl-footer-left">
+        <span class="cl-footer-note">Baseado no Playbook de Boas Práticas</span>
+        <a class="cl-footer-link" href="https://lively-stone-0d4b6d40f.2.azurestaticapps.net/analytics/boas_praticas/" target="_blank">Acessar o Playbook completo →</a>
+      </div>
+      <button class="cl-reset" onclick="resetAll()">Limpar tudo</button>
+    </div>
+
+  </div>
+
+  <script>
+    const TOTAL = 26;
+    function toggle(el) {
+      el.classList.toggle('checked');
+      update();
+    }
+    function update() {
+      const n = document.querySelectorAll('.cl-item.checked').length;
+      document.getElementById('pnum').textContent = n;
+      document.getElementById('pbar').style.width = (n / TOTAL * 100) + '%';
+    }
+    function resetAll() {
+      document.querySelectorAll('.cl-item.checked').forEach(el => el.classList.remove('checked'));
+      update();
+    }
+  </script>
+</body>
+</html>
