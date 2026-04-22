@@ -38,8 +38,47 @@
       font-size: 22px;
       font-weight: 600;
       color: #3C3C3B;
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.25rem;
       line-height: 1.25;
+    }
+
+    /* Campo nome do projeto */
+    .cl-project-wrap {
+      margin-bottom: 1.75rem;
+    }
+    .cl-project-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #3C3C3B;
+      opacity: 0.4;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .cl-project-input {
+      font-family: 'Aptos', 'Segoe UI', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #3C3C3B;
+      background: #fff;
+      border: 1px solid #e3e3e2;
+      border-radius: 10px;
+      padding: 9px 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .cl-project-input::placeholder { color: #b0afae; font-weight: 400; }
+    .cl-project-input:focus { border-color: #D7262C; }
+
+    /* Nome do projeto em modo impressão (substitui o input) */
+    .cl-project-static {
+      display: none;
+      font-size: 15px;
+      font-weight: 500;
+      color: #3C3C3B;
+      padding: 2px 0;
     }
 
     .cl-header {
@@ -141,21 +180,76 @@
     }
     .cl-footer-link:hover { opacity: 1; border-bottom-color: #D7262C; }
 
-    .cl-reset {
+    .cl-footer-actions { display: flex; gap: 8px; align-items: center; }
+
+    .cl-reset, .cl-export {
       font-family: 'Aptos', 'Segoe UI', sans-serif;
       font-size: 12px;
       font-weight: 500;
-      color: #D7262C;
-      background: none;
-      border: 1px solid #D7262C;
       border-radius: 8px;
       padding: 5px 14px;
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
-      opacity: 0.75;
       white-space: nowrap;
     }
+    .cl-reset {
+      color: #D7262C;
+      background: none;
+      border: 1px solid #D7262C;
+      opacity: 0.75;
+    }
     .cl-reset:hover { background: #D7262C; color: #fff; opacity: 1; }
+    .cl-export {
+      color: #fff;
+      background: #D7262C;
+      border: 1px solid #D7262C;
+      opacity: 0.85;
+    }
+    .cl-export:hover { opacity: 1; }
+
+    /* ── Estilos de impressão ── */
+    @media print {
+      @page {
+        size: A4;
+        margin: 20mm 18mm 18mm 18mm;
+      }
+
+      body {
+        background: #fff;
+        padding: 0;
+        display: block;
+      }
+
+      .cl-root {
+        max-width: 100%;
+        padding: 0;
+      }
+
+      /* Oculta input e mostra texto estático */
+      .cl-project-input { display: none !important; }
+      .cl-project-static { display: block !important; }
+
+      /* Oculta botões */
+      .cl-footer-actions { display: none !important; }
+
+      /* Garante que itens marcados apareçam com fundo branco */
+      .cl-item { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cl-item.checked { background: #fff !important; border-color: #e3e3e2 !important; }
+      .cl-item.checked .cl-box { background: #D7262C !important; border-color: #D7262C !important; }
+      .cl-item.checked .cl-item-text { color: #b0afae !important; }
+      .cl-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+      /* Evita quebra de página dentro de seções */
+      .cl-section { break-inside: avoid; }
+
+      /* Rodapé sempre no final, sem quebra */
+      .cl-footer { break-inside: avoid; }
+
+      /* Adiciona data de impressão no rodapé */
+      .cl-footer-note::after {
+        content: " — Impresso em " attr(data-date);
+      }
+    }
   </style>
 </head>
 <body>
@@ -163,6 +257,19 @@
 
     <p class="cl-eyebrow">Power BI &nbsp;|&nbsp; Solo Network</p>
     <h1 class="cl-title">Checklist de boas práticas<br>para dashboards</h1>
+
+    <!-- Campo nome do projeto -->
+    <div class="cl-project-wrap">
+      <label class="cl-project-label" for="projectName">Nome do projeto</label>
+      <input
+        class="cl-project-input"
+        id="projectName"
+        type="text"
+        placeholder="Ex.: Análise de Vendas"
+        autocomplete="off"
+      />
+      <span class="cl-project-static" id="projectStatic"></span>
+    </div>
 
     <div class="cl-header">
       <div class="cl-kpi">
@@ -223,28 +330,59 @@
 
     <div class="cl-footer">
       <div class="cl-footer-left">
-        <span class="cl-footer-note">Baseado no Playbook de Boas Práticas</span>
+        <span class="cl-footer-note" id="footerNote">Baseado no Playbook de Boas Práticas</span>
         <a class="cl-footer-link" href="https://lively-stone-0d4b6d40f.2.azurestaticapps.net/analytics/boas_praticas/" target="_blank">Acessar o Playbook completo →</a>
       </div>
-      <button class="cl-reset" onclick="resetAll()">Limpar tudo</button>
+      <div class="cl-footer-actions">
+        <button class="cl-reset" onclick="resetAll()">Limpar tudo</button>
+        <button class="cl-export" onclick="exportPDF()">Exportar PDF</button>
+      </div>
     </div>
 
   </div>
 
   <script>
     const TOTAL = 26;
+
     function toggle(el) {
       el.classList.toggle('checked');
       update();
     }
+
     function update() {
       const n = document.querySelectorAll('.cl-item.checked').length;
       document.getElementById('pnum').textContent = n;
       document.getElementById('pbar').style.width = (n / TOTAL * 100) + '%';
     }
+
     function resetAll() {
       document.querySelectorAll('.cl-item.checked').forEach(el => el.classList.remove('checked'));
       update();
+    }
+
+    function exportPDF() {
+      const input = document.getElementById('projectName');
+      const staticEl = document.getElementById('projectStatic');
+      const footerNote = document.getElementById('footerNote');
+
+      // Sincroniza o texto estático com o valor do input (para impressão)
+      staticEl.textContent = input.value || '(sem nome definido)';
+
+      // Injeta a data atual no rodapé via data-attribute
+      const hoje = new Date().toLocaleDateString('pt-BR', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      });
+      footerNote.setAttribute('data-date', hoje);
+
+      // Atualiza o título da aba para nomear o arquivo PDF
+      const projeto = input.value.trim() || 'checklist';
+      const tituloOriginal = document.title;
+      document.title = 'Checklist — ' + projeto;
+
+      window.print();
+
+      // Restaura o título
+      document.title = tituloOriginal;
     }
   </script>
 </body>
